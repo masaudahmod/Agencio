@@ -25,7 +25,7 @@ const userSchema = new Schema(
     password: { type: String, required: true },
     role: {
       type: String,
-      enum: ["superadmin", "cm", "developer", "designer", "marketer"],
+      enum: ["superAdmin", "cm", "developer", "designer", "marketer"],
       default: "designer",
     },
     emailVerified: Date,
