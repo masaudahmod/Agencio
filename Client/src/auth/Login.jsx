@@ -124,13 +124,6 @@ export default function Login() {
               Register
             </Link>
           </div>
-
-          {/* Demo */}
-          <div className="text-xs text-center text-gray-500 mt-4">
-            <p className="font-semibold">Demo Credentials</p>
-            <p>Admin: superAdmin@example.com / superAdmin123</p>
-            <p>Designer: designer@example.com / designer123</p>
-          </div>
         </form>
       </div>
     </div>
