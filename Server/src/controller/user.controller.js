@@ -48,7 +48,7 @@ const registerUser = async (req, res) => {
     return res.json(
       new ApiSuccess(
         201,
-        "User created successfully. Please verify your email.",
+        "User created successfully. ",
         { user }
       )
     );
