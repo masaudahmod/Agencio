@@ -9,8 +9,7 @@ import { auth } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
-
-router.route("/users").get(getUser);
+router.route("/users").get(auth, getUser);
 router.route("/users/register").post(registerUser);
 router.route("/users/login").post(loginUser);
 router.route("/users/logout").post(auth, logoutUser);

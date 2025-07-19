@@ -159,7 +159,7 @@ const logoutUser = async (req, res) => {
 
 const getUser = async (req, res) => {
   try {
-    const { userId } = req;
+    const userId = req.user._id;
     const user = await User.findById(userId).select("-password -refreshToken");
     if (!user) {
       throw new ApiError(404, "User not found");

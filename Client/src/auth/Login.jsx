@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useLoginMutation } from "../features/api/authSlice";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -8,29 +9,18 @@ export default function Login() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const navigate = useNavigate();
+
+  const [login, { isError }] = useLoginMutation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
-    setError("");
-
     try {
-      const res = await fetch("https://your-backend-url.com/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data?.message || "Invalid email or password");
+      const { data } = await login({ email, password });
+      setIsLoading(true);
+      if (data) {
+        navigate("/");
       }
-
-      // Success → You can redirect or set auth state here
-      console.log("✅ Login success:", data);
     } catch (err) {
       console.error(err);
       setError(err.message || "Something went wrong!");
@@ -38,6 +28,13 @@ export default function Login() {
       setIsLoading(false);
     }
   };
+
+  if (isError) {
+    return <div className="text-red-500 text-lg text-center">{error}</div>;
+  }
+  if (isLoading) {
+    return <div className="text-center text-green-600 text-lg">Loading...</div>;
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-100 via-white to-purple-100 py-12 px-4 sm:px-6 lg:px-8">
@@ -109,7 +106,7 @@ export default function Login() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full flex justify-center py-2 px-4 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition"
+              className="w-full cursor-pointer flex justify-center py-2 px-4 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition"
             >
               {isLoading ? "Signing in..." : "Sign In"}
             </button>

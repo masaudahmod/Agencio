@@ -1,27 +1,41 @@
 import { useEffect, useState } from "react";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
+import { useGetUserQuery, useLogoutMutation } from "../features/api/authSlice";
 
-export default function DashboardLayout({ children }) {
+export default function DashboardLayout() {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  const navigate = useNavigate();
+
+  const [logout, { isError }] = useLogoutMutation();
+  const { data: userData } = useGetUserQuery();
+
   useEffect(() => {
+    if (userData) {
+      setUser(userData);
+    }
     setIsLoading(false);
-    setUser({
-      name: "John Doe",
-      role: "admin",
-    });
-  }, []);
+  }, [userData]);
 
   const handleLogout = () => {
     console.log("Logout clicked");
+    logout();
+    navigate("/login");
   };
 
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <p className="text-lg">Loading...</p>
+      </div>
+    );
+  }
+  if (isError) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-lg text-red-500">Error loading user data</p>
       </div>
     );
   }
@@ -34,25 +48,45 @@ export default function DashboardLayout({ children }) {
             <div className="flex">
               <div className="flex-shrink-0 flex items-center">
                 <NavLink
-                  to="/dashboard"
-                  className="text-xl font-bold text-indigo-600"
+                  to="/"
+                  className={`text-xl font-bold text-indigo-600 `}
                 >
                   Approve Hub
                 </NavLink>
               </div>
-              <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
-                {user?.role === "admin" && (
-                  <a
-                    href="/dashboard/settings"
+              <div className="hidden sm:ml-6 sm:flex sm:space-x-4">
+                {user?.role === "superAdmin" && (
+                  <NavLink
+                    to="/settings"
                     className={`${
-                      window.location.pathname === "/dashboard/settings" // Check if the current page is the settings page
+                      window.location.pathname === "/settings" // Check if the current page is the settings page
                         ? "border-indigo-500 text-gray-900"
                         : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
                     } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
                   >
                     Settings
-                  </a>
+                  </NavLink>
                 )}
+                <NavLink
+                  to="/dashboard"
+                  className={`${
+                    window.location.pathname === "/dashboard" // Check if the current page is the dashboard
+                      ? "border-indigo-500 text-gray-900"
+                      : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                  } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
+                >
+                  Dashboard
+                </NavLink>
+                <NavLink
+                  to="/content/write"
+                  className={`${
+                    window.location.pathname === "/content/write" // Check if the current page is the write content page
+                      ? "border-indigo-500 text-gray-900"
+                      : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                  } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
+                >
+                  Write Content
+                </NavLink>
               </div>
             </div>
             <div className="hidden sm:ml-6 sm:flex sm:items-center">
@@ -63,7 +97,7 @@ export default function DashboardLayout({ children }) {
                   </span>
                   <button
                     onClick={handleLogout}
-                    className="inline-flex cursor-pointer items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    className="inline-flex cursor-pointer items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 "
                   >
                     Logout
                   </button>
@@ -75,10 +109,9 @@ export default function DashboardLayout({ children }) {
             <div className="flex items-center sm:hidden">
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+                className="inline-flex items-center justify-center p-2 rounded-md text-gray-900 hover:text-gray-500"
                 aria-expanded="false"
               >
-                <span className="sr-only">Open main menu</span>
                 {/* Icon when menu is closed */}
                 <svg
                   className={`${isMobileMenuOpen ? "hidden" : "block"} h-6 w-6`}
@@ -120,7 +153,19 @@ export default function DashboardLayout({ children }) {
         <div className={`${isMobileMenuOpen ? "block" : "hidden"} sm:hidden`}>
           <div className="pt-2 pb-3 space-y-1">
             <NavLink
+              to="/content/write"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className={`${
+                window.location.pathname === "/content/write"
+                  ? "bg-indigo-50 border-indigo-500 text-indigo-700"
+                  : "border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800"
+              } block pl-3 pr-4 py-2 border-l-4 text-base font-medium`}
+            >
+              Write Content
+            </NavLink>
+            <NavLink
               to="/dashboard"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className={`${
                 window.location.pathname === "/dashboard"
                   ? "bg-indigo-50 border-indigo-500 text-indigo-700"
@@ -129,9 +174,10 @@ export default function DashboardLayout({ children }) {
             >
               Dashboard
             </NavLink>
-            {user?.role === "admin" && (
+            {user?.role === "superAdmin" && (
               <NavLink
                 to="/dashboard/settings"
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 className={`${
                   window.location.pathname === "/dashboard/settings"
                     ? "bg-indigo-50 border-indigo-500 text-indigo-700"
@@ -164,8 +210,9 @@ export default function DashboardLayout({ children }) {
           </div>
         </div>
       </nav>
-
-      {children}
+      <main className="container mx-auto px-3 sm:px-3 lg:px-5 py-6">
+        <Outlet />
+      </main>
     </div>
   );
 }
