@@ -16,13 +16,11 @@ const contentSchema = Schema(
       enum: ["pending", "complete"],
       default: "pending",
     },
-    comments: [
-      {
-        user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-        comment: String,
-        date: Date,
-      },
-    ],
+    comments: {
+      user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+      comment: String,
+      date: Date,
+    },
   },
   { timestamps: true }
 );

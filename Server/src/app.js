@@ -17,9 +17,11 @@ app.use(cookieParser());
 import { errorHandler } from "./middleware/errorHandler.middleware.js";
 import userRoutes from "./routes/user.route.js";
 import businessRoutes from "./routes/business.route.js";
+import contentRoutes from "./routes/content.route.js";
 
 app.use("/api/v1", userRoutes);
 app.use("/api/v1", businessRoutes);
+app.use("/api/v1", contentRoutes);
 
 app.get("/", (_, res) => {
   return res.json(

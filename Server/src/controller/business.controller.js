@@ -1,4 +1,5 @@
 import { Business } from "../model/business.schema.js";
+import { ApiError } from "../utils/ApiErrors.js";
 import { ApiSuccess } from "../utils/ApiSuccess.js";
 
 // ✅ Create a new business
@@ -41,40 +42,77 @@ const getAllBusinesses = async (req, res, next) => {
 };
 
 // // ✅ Get single business
-// const getBusinessById = catchAsync(async (req, res, next) => {
-//   const business = await Business.findById(req.params.id).populate(
-//     "createdBy assignedTeam.assignBy assignedTeam.campaignCoordinator",
-//     "name email"
-//   );
+const getBusinessById = async (req, res, next) => {
+  try {
+    const business = await Business.findById(req.params.id).populate(
+      "createdBy assignedTeam.assignBy assignedTeam.campaignCoordinator",
+      "name email"
+    );
 
-//   if (!business) return next(new AppError("Business not found", 404));
+    if (!business) return next(new AppError("Business not found", 404));
 
-//   res.status(200).json({ success: true, data: business });
-// });
+    res
+      .status(200)
+      .json(new ApiSuccess(200, "Business fetched successfully", { business }));
+  } catch (error) {
+    console.log("error in getBusinessById", error);
+    next(error);
+  }
+};
 
 // // ✅ Update
-// const updateBusiness = catchAsync(async (req, res, next) => {
-//   const updated = await Business.findByIdAndUpdate(req.params.id, req.body, {
-//     new: true,
-//   });
+const updateBusiness = async (req, res, next) => {
+  try {
+    const updateData = req.body;
 
-//   if (!updated) return next(new AppError("Business not found", 404));
+    if (!updateData || Object.keys(updateData).length === 0) {
+      throw new ApiError(400, "No fields provided to update.");
+    }
 
-//   res.status(200).json({ success: true, data: updated });
-// });
+    const updatedBusiness = await Business.findByIdAndUpdate(
+      req.params.id,
+      { $set: updateData },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    if (!updatedBusiness) {
+      return next(new ApiError("Business not found", 404));
+    }
+
+    res.status(200).json(
+      new ApiSuccess(200, "Business updated successfully", {
+        updatedBusiness,
+      })
+    );
+  } catch (error) {
+    console.error("Error in updateBusiness:", error);
+    next(error);
+  }
+};
+
 
 // // ✅ Delete
-// const deleteBusiness = catchAsync(async (req, res, next) => {
-//   const deleted = await Business.findByIdAndDelete(req.params.id);
-//   if (!deleted) return next(new AppError("Business not found", 404));
+const deleteBusiness = async (req, res, next) => {
+  try {
+    const deletedBusiness = await Business.findByIdAndDelete(req.params.id);
 
-//   res.status(204).json({ success: true, message: "Business deleted" });
-// });
+    if (!deletedBusiness) return next(new AppError("Business not found", 404));
+    res
+      .status(200)
+      .json(new ApiSuccess(200, "Business deleted successfully", {}));
+  } catch (error) {
+    console.log("error in deleteBusiness", error);
+    next(error);
+  }
+};
 
 export {
   createBusiness,
-  // getBusinessById,
-  // updateBusiness,
-  // deleteBusiness,
+  getBusinessById,
+  updateBusiness,
+  deleteBusiness,
   getAllBusinesses,
 };
