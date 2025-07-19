@@ -1,4 +1,6 @@
-import { User } from "../model/user.model.js";
+import { User } from "../model/user.shcema.js";
+import { ApiError } from "../utils/ApiErrors.js";
+import { ApiSuccess } from "../utils/ApiSuccess.js";
 
 const generateTokens = async (_id) => {
   try {
@@ -33,15 +35,23 @@ const registerUser = async (req, res) => {
       password,
       role: "designer",
     });
-    res.status(201).json({
-      message: "User created successfully",
-      user: {
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-      },
-    });
+    // res.status(201).json({
+    //   message: "User created successfully",
+    //   user: {
+    //     _id: user._id,
+    //     name: user.name,
+    //     email: user.email,
+    //     role: user.role,
+    //   },
+    // });
+
+    return res.json(
+      new ApiSuccess(
+        201,
+        "User created successfully. Please verify your email.",
+        { user }
+      )
+    );
   } catch (error) {
     console.log("createUser", error);
     return res
@@ -56,28 +66,52 @@ const loginUser = async (req, res) => {
     if (!email || !password) {
       throw new ApiError(400, "Email and password are required");
     }
-    const user = await User.findOne({ email });
-    if (!user) {
+    const isUser = await User.findOne({ email });
+    if (!isUser) {
       throw new ApiError(404, "User not found");
     }
-    const isPasswordCorrect = await user.isPasswordCorrect(password);
+    const isPasswordCorrect = await isUser.isPasswordCorrect(password);
     if (!isPasswordCorrect) {
       throw new ApiError(401, "Invalid password");
     }
 
+    const user = await User.findOne({ email })
+      .select("-password -refreshToken")
+      .populate("role");
+
     const { accessToken, refreshToken } = await generateTokens(user._id);
 
-    res.status(200).json({
-      message: "User logged in successfully",
-      user: {
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-      },
-      accessToken,
-      refreshToken,
-    });
+    const options = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+    };
+
+    console.log(`User: ${user.name} Logged In`);
+
+    res
+      .cookie("accessToken", accessToken, options)
+      .cookie("refreshToken", refreshToken, options);
+
+    // res.status(200).json({
+    //   message: "User logged in successfully",
+    //   user: {
+    //     _id: user._id,
+    //     name: user.name,
+    //     email: user.email,
+    //     role: user.role,
+    //   },
+    //   accessToken,
+    //   refreshToken,
+    // });
+
+    return res.json(
+      new ApiSuccess(200, "Login successful", {
+        user: user,
+        accessToken,
+        refreshToken,
+      })
+    );
   } catch (error) {
     console.log("error in loginUser", error);
     return res
@@ -88,14 +122,33 @@ const loginUser = async (req, res) => {
 
 const logoutUser = async (req, res) => {
   try {
-    const { userId } = req;
-    const user = await User.findById(userId);
-    if (!user) {
-      throw new ApiError(404, "User not found");
-    }
-    user.refreshToken = null;
-    await user.save();
-    res.status(200).json({ message: "User logged out successfully" });
+    // const userId = req.user._id;
+    // const user = await User.findById(userId);
+
+    // if (!user) {
+    //   throw new ApiError(404, "User not found");
+    // }
+    // user.refreshToken = null;
+    // await user.save();
+    // res.clearCookie("refreshToken", {
+    //   httpOnly: true,
+    //   secure: true,
+    //   sameSite: "strict",
+    // });
+    // res.clearCookie("accessToken", {
+    //   httpOnly: true,
+    //   secure: true,
+    //   sameSite: "strict",
+    // });
+
+    await User.findByIdAndUpdate(req.user._id, {
+      $set: { refreshToken: null },
+    });
+
+    res.clearCookie("accessToken");
+    res.clearCookie("refreshToken");
+    console.log(`User: ${req.user.name} Logged Out`);
+    return res.json(new ApiSuccess(200, "Logout successful", {}));
   } catch (error) {
     console.log("error in logoutUser", error);
     return res

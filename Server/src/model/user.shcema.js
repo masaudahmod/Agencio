@@ -1,12 +1,12 @@
 import mongoose, { model, Schema } from "mongoose";
-import { emailValidator } from "../utils/validator";
+import { emailValidator } from "../utils/validator.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import {
   ACCESSTOKEN_SECRET,
   JWT_SECRET,
   REFRESHTOKEN_SECRET,
-} from "../constant";
+} from "../constant.js";
 
 const userSchema = new Schema(
   {
