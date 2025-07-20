@@ -20,7 +20,6 @@ export default function DashboardLayout() {
   }, [userData]);
 
   const handleLogout = () => {
-    console.log("Logout clicked");
     logout();
     navigate("/login");
   };

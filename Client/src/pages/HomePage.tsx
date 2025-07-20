@@ -227,24 +227,12 @@ const HomePage = () => {
     }
   };
 
-  const getPriorityColor = (priority) => {
-    switch (priority) {
-      case "High":
-        return "bg-red-100 text-red-800";
-      case "Medium":
-        return "bg-yellow-100 text-yellow-800";
-      case "Low":
-        return "bg-green-100 text-green-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Main Content */}
       <div className="container mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-3">
           {/* Left Sidebar - Business List */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-lg shadow-sm">
@@ -293,7 +281,7 @@ const HomePage = () => {
           </div>
 
           {/* Right Content - Tasks Table */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-3">
             <div className="bg-white rounded-lg shadow-sm">
               <div className="p-4 border-b">
                 <h2 className="text-lg font-semibold text-gray-900">

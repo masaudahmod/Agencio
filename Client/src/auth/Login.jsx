@@ -11,27 +11,30 @@ export default function Login() {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const navigate = useNavigate();
 
-  const [login, { isError }] = useLoginMutation();
+  const [login] = useLoginMutation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await login({ email, password });
+      const res = await login({ email, password });
+      setError(res?.error?.data?.message || "");
+      if (res?.error) {
+        return;
+      }
+      const { data } = res;
       setIsLoading(true);
       if (data) {
         navigate("/");
+        setEmail("");
+        setPassword("");
       }
     } catch (err) {
-      console.error(err);
-      setError(err.message || "Something went wrong!");
+      console.log(err);
     } finally {
       setIsLoading(false);
     }
   };
 
-  if (isError) {
-    return <div className="text-red-500 text-lg text-center">{error}</div>;
-  }
   if (isLoading) {
     return <div className="text-center text-green-600 text-lg">Loading...</div>;
   }
@@ -48,8 +51,15 @@ export default function Login() {
           </p>
         </div>
 
-        <form className="space-y-6" onSubmit={handleSubmit}>
+        <form className="space-y-5" onSubmit={handleSubmit}>
           <div className="">
+            {/* error message */}
+            {error && (
+              <div className="text-red-500 text-base text-center mb-5 font-semibold">
+                {error}
+              </div>
+            )}
+
             {/* Email */}
             <div>
               <label htmlFor="email" className="sr-only">
@@ -95,12 +105,6 @@ export default function Login() {
               </button>
             </div>
           </div>
-
-          {/* Error */}
-          {error && (
-            <div className="text-red-500 text-sm text-center">{error}</div>
-          )}
-
           {/* Submit */}
           <div>
             <button

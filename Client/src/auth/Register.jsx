@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useRegisterMutation } from "../features/api/authSlice";
+
 
 export default function Register() {
   const [name, setName] = useState("");
@@ -9,6 +11,9 @@ export default function Register() {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const [register] = useRegisterMutation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -16,13 +21,18 @@ export default function Register() {
     setError("");
 
     try {
-      const userData = { name, email, password };
-
-      // Simulate backend call
-      console.log("Sending to backend:", userData);
-
-      // Optional: save to localStorage or redirect
-      localStorage.setItem("user", JSON.stringify(userData));
+      const res = await register({ name, email, password });
+      if (res.error) {
+        setError(res?.error?.data?.message);
+        return;
+      }
+      const { data } = res;
+      if (data) {
+        navigate("/login");
+        setName("");
+        setEmail("");
+        setPassword("");
+      }
     } catch (err) {
       console.error(err);
       setError("Registration failed. Please try again.");
@@ -43,7 +53,13 @@ export default function Register() {
           </p>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm -space-y-px">
+          <div className="rounded-md -space-y-px">
+            {/* error message */}
+            {error && (
+              <div className="text-red-500 text-base text-center font-semibold mb-3">
+                {error}
+              </div>
+            )}
             <div>
               <label htmlFor="name" className="sr-only">
                 Name
@@ -53,7 +69,7 @@ export default function Register() {
                 name="name"
                 type="text"
                 required
-                placeholder="Full Name"
+                placeholder="Your Name"
                 className="appearance-none rounded-t-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -85,7 +101,7 @@ export default function Register() {
                 type={passwordVisible ? "text" : "password"}
                 autoComplete="new-password"
                 required
-                placeholder="Password"
+                placeholder="Your Password"
                 className="appearance-none rounded-b-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -103,10 +119,6 @@ export default function Register() {
               </button>
             </div>
           </div>
-
-          {error && (
-            <div className="text-red-500 text-sm text-center">{error}</div>
-          )}
 
           <div>
             <button
