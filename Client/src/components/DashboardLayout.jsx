@@ -54,7 +54,7 @@ export default function DashboardLayout() {
                   to="/"
                   className={`text-xl font-bold text-indigo-600 `}
                 >
-                  Approve Hub
+                  Agencio
                 </NavLink>
               </div>
               <div className="hidden sm:ml-6 sm:flex sm:space-x-4">
@@ -62,7 +62,7 @@ export default function DashboardLayout() {
                   <NavLink
                     to="/settings"
                     className={`${
-                      window.location.pathname === "/settings" // Check if the current page is the settings page
+                      window.location.pathname === "/settings"
                         ? "border-indigo-500 text-gray-900"
                         : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
                     } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
@@ -73,22 +73,42 @@ export default function DashboardLayout() {
                 <NavLink
                   to="/dashboard"
                   className={`${
-                    window.location.pathname === "/dashboard" // Check if the current page is the dashboard
+                    window.location.pathname === "/dashboard"
                       ? "border-indigo-500 text-gray-900"
                       : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
                   } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
                 >
-                  Dashboard
+                  All Contents
                 </NavLink>
                 <NavLink
                   to="/content/write"
                   className={`${
-                    window.location.pathname === "/content/write" // Check if the current page is the write content page
+                    window.location.pathname === "/content/write"
                       ? "border-indigo-500 text-gray-900"
                       : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
                   } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
                 >
                   Write Content
+                </NavLink>
+                <NavLink
+                  to="/business"
+                  className={`${
+                    window.location.pathname === "/business"
+                      ? "border-indigo-500 text-gray-900"
+                      : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                  } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
+                >
+                  Businesses
+                </NavLink>
+                <NavLink
+                  to="/business/add"
+                  className={`${
+                    window.location.pathname === "/business/add"
+                      ? "border-indigo-500 text-gray-900"
+                      : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                  } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
+                >
+                  Add Business
                 </NavLink>
               </div>
             </div>
@@ -175,7 +195,30 @@ export default function DashboardLayout() {
                   : "border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800"
               } block pl-3 pr-4 py-2 border-l-4 text-base font-medium`}
             >
-              Dashboard
+              All Contents
+            </NavLink>
+            <NavLink
+              to="/business"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className={`${
+                window.location.pathname === "/dashboard"
+                  ? "bg-indigo-50 border-indigo-500 text-indigo-700"
+                  : "border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800"
+              } block pl-3 pr-4 py-2 border-l-4 text-base font-medium`}
+            >
+              Businesses
+            </NavLink>
+            <NavLink
+              to="/business/add"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className={`${
+                window.location.pathname === "/business/add"
+                  ? "bg-indigo-50 border-indigo-500 text-indigo-700"
+                  : "border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800"
+              }
+              block pl-3 pr-4 py-2 border-l-4 text-base font-medium`}
+            >
+              Add Business
             </NavLink>
             {user?.role === "superAdmin" && (
               <NavLink

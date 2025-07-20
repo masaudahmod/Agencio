@@ -10,87 +10,31 @@ import {
 } from "react-icons/ai";
 import { useGetBusinessesQuery } from "../features/api/businessSlice";
 import Modal from "../components/ModaView";
-
-const sampleData = {
-  business: "687b7bde6ff19fb83414032c",
-  assignedTo: "687b3e17a70a4f28517aba6b",
-  name: "Autumn Collection Tease",
-  postMaterial: "Sneak peek of our cozy fall collection dropping soon 🍂",
-  posterMaterial: "Sneak peek of our cozy fall collection dropping soon 🍂",
-  vision: "Build hype for the new autumn lineup on Pinterest and Instagram.",
-  tags: ["autumn", "tease", "collection", "fashion"],
-  status: "pending",
-  comment: "Waiting on product shots.",
-};
+import { useGetContentByDateQuery } from "../features/api/contentSlice";
+import {
+  MdOutlineContentPasteSearch,
+  MdEditCalendar,
+  MdOutlineDeleteSweep,
+} from "react-icons/md";
 
 const HomePage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedBusiness, setSelectedBusiness] = useState(null);
+  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
 
   const [isOpen, setIsOpen] = useState(false);
 
   const { data, isLoading, error } = useGetBusinessesQuery();
+  const {
+    data: contents,
+    isLoading: isContentLoading,
+    error: contentError,
+  } = useGetContentByDateQuery(date);
 
-  // Mock business data - in real app, this would come from database
   const businessData = data?.data?.businesses;
+  const contentData = contents?.data;
+  
 
-  const taskData = useMemo(
-    () => [
-      {
-        id: 1,
-        businessId: 1,
-        title: "Website Redesign",
-        typeOfBusiness: "Development",
-        status: "Pending",
-        priority: "High",
-        dueDate: "2025-07-25",
-        assignee: "John Smith",
-      },
-      {
-        id: 2,
-        businessId: 1,
-        title: "Marketing Campaign",
-        typeOfBusiness: "Marketing",
-        status: "Completed",
-        priority: "Medium",
-        dueDate: "2025-07-20",
-        assignee: "Sarah Johnson",
-      },
-      {
-        id: 3,
-        businessId: 2,
-        title: "Menu Update",
-        typeOfBusiness: "Operations",
-        status: "Pending",
-        priority: "Low",
-        dueDate: "2025-07-30",
-        assignee: "Mike Wilson",
-      },
-      {
-        id: 4,
-        businessId: 3,
-        title: "Staff Training",
-        typeOfBusiness: "HR",
-        status: "Pending",
-        priority: "High",
-        dueDate: "2025-07-22",
-        assignee: "Emma Davis",
-      },
-      {
-        id: 5,
-        businessId: 4,
-        title: "Inventory Check",
-        typeOfBusiness: "Operations",
-        status: "Completed",
-        priority: "Medium",
-        dueDate: "2025-07-18",
-        assignee: "Alex Brown",
-      },
-    ],
-    []
-  );
-
-  // Filter businesses based on search term
   const filteredBusinesses = useMemo(() => {
     if (!searchTerm) return businessData;
 
@@ -103,17 +47,22 @@ const HomePage = () => {
     );
   }, [searchTerm, businessData]);
 
-  // Get tasks for selected business
-  const businessTasks = useMemo(() => {
-    if (!selectedBusiness) return taskData.slice(0, 5);
-    return taskData.filter((task) => task.businessId === selectedBusiness._id);
-  }, [selectedBusiness, taskData]);
+  // Get content for selected business
+  const businessContent = useMemo(() => {
+    if (!selectedBusiness) return contentData;
+    return contentData.filter(
+      (content) => content.business === selectedBusiness._id
+    );
+  }, [selectedBusiness, contentData]);
+
+  console.log("Business Content:", businessContent);
+
 
   const getStatusIcon = (status) => {
     switch (status) {
-      case "Completed":
+      case "completed":
         return <CheckCircle className="w-4 h-4 text-green-500" />;
-      case "Pending":
+      case "pending":
         return <AlertCircle className="w-4 h-4 text-yellow-500" />;
     }
   };
@@ -128,12 +77,13 @@ const HomePage = () => {
             <div className="bg-white rounded-lg shadow-sm">
               <div className="flex items-center justify-between p-4 border-b">
                 {/* filter content by date */}
-                <input type="date" id="" />
-                {/* filter content by date */}
-                <button className="flex items-center cursor-pointer gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                  <Filter className="w-4 h-4" />
-                  Filter
-                </button>
+                <input
+                  type="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  id=""
+                  className="px-3 w-full text-lg cursor-pointer border-none outline-none"
+                />
               </div>
               <div className="relative flex-1">
                 <div className="relative">
@@ -196,12 +146,12 @@ const HomePage = () => {
               </div>
 
               {/* Tasks Table */}
-              <div className="overflow-x-auto">
+              <div className="w-full">
                 <table className="w-full">
                   <thead className="bg-gray-50">
                     <tr>
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Task
+                        Content
                       </th>
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         typeOfBusiness
@@ -214,54 +164,71 @@ const HomePage = () => {
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {businessTasks.map((task) => (
-                      <tr key={task.id} className="hover:bg-gray-50">
-                        <td className="px-4 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">
-                            {task.title}
-                          </div>
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap">
-                          <span className="text-sm text-gray-600">
-                            {task.typeOfBusiness}
-                          </span>
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap">
-                          <div className="flex items-center gap-2">
-                            {getStatusIcon(task.status)}
-                            <span className="text-sm text-gray-900">
-                              {task.status}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="px-4 flex gap-2 cursor-pointer py-4 whitespace-nowrap text-sm text-gray-600">
-                          <button className="text-blue-500 cursor-pointer">
-                            Edit
-                          </button>
-                          <button className="text-red-500 cursor-pointer">
-                            Delete
-                          </button>
-                          <button
-                            onClick={() => setIsOpen(true)}
-                            className="text-green-500 cursor-pointer"
-                          >
-                            View
-                          </button>
+                  {isContentLoading ? (
+                    <tbody>
+                      <tr>
+                        <td colSpan="4" className="text-center py-4">
+                          Loading content...
                         </td>
                       </tr>
-                    ))}
-                  </tbody>
+                    </tbody>
+                  ) : contentError ? (
+                    <tbody>
+                      <tr>
+                        <td colSpan="4" className="text-center py-4">
+                          Error fetching content: {contentError.message}
+                        </td>
+                      </tr>
+                    </tbody>
+                  ) : (
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {businessContent.map((content, index) => (
+                        <tr key={index} className="hover:bg-gray-50">
+                          <td className="px-4 py-4 whitespace-nowrap">
+                            <div className="text-sm font-medium text-gray-900">
+                              {content.name}
+                            </div>
+                          </td>
+                          <td className="px-4 py-4 whitespace-nowrap">
+                            <span className="text-sm text-gray-600">
+                              {content.typeOfBusiness}
+                            </span>
+                          </td>
+                          <td className="px-4 py-4 whitespace-nowrap">
+                            <div className="flex items-center gap-2">
+                              {getStatusIcon(content.status)}
+                              <span className="text-sm text-gray-900 capitalize">
+                                {content.status}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="px-4 flex gap-3 cursor-pointer py-4 whitespace-nowrap text-sm text-gray-600">
+                            <button className="text-blue-500 cursor-pointer text-2xl">
+                              <MdEditCalendar />
+                            </button>
+                            <button className="text-red-500 cursor-pointer text-3xl">
+                              <MdOutlineDeleteSweep />
+                            </button>
+                            <button
+                              onClick={() => setIsOpen(true)}
+                              className="text-green-500 cursor-pointer text-2xl"
+                            >
+                              <MdOutlineContentPasteSearch />
+                            </button>
+                            <Modal
+                              isOpen={isOpen}
+                              onClose={() => setIsOpen(false)}
+                              data={content}
+                            />
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  )}
                 </table>
               </div>
 
-              <Modal
-                isOpen={isOpen}
-                onClose={() => setIsOpen(false)}
-                data={sampleData}
-              />
-
-              {businessTasks.length === 0 && (
+              {businessContent && businessContent.length === 0 && (
                 <div className="text-center py-8 text-gray-500">
                   No tasks found for the selected business.
                 </div>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { useGetUserQuery, useLoginMutation } from "../features/api/authSlice";
@@ -18,9 +18,11 @@ export default function Login() {
 
   const { data: userData } = useGetUserQuery();
 
-  if (userData) {
-    navigate("/");
-  }
+  useEffect(() => {
+    if (userData) {
+      navigate("/");
+    }
+  }, [userData, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
