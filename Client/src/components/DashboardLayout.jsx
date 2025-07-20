@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useGetUserQuery, useLogoutMutation } from "../features/api/authSlice";
+import { useDispatch } from "react-redux";
+import { clearCredentials } from "../features/authHandle";
 
 export default function DashboardLayout() {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const dispatch = useDispatch();
 
   const navigate = useNavigate();
 
@@ -22,6 +25,7 @@ export default function DashboardLayout() {
   const handleLogout = () => {
     logout();
     navigate("/login");
+    dispatch(clearCredentials());
   };
 
   if (isLoading) {

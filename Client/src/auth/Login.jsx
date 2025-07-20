@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
-import { useLoginMutation } from "../features/api/authSlice";
+import { useGetUserQuery, useLoginMutation } from "../features/api/authSlice";
+import { useDispatch } from "react-redux";
+import { setCredentials } from "../features/authHandle";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -10,8 +12,15 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [login] = useLoginMutation();
+
+  const { data: userData } = useGetUserQuery();
+
+  if (userData) {
+    navigate("/");
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,6 +33,8 @@ export default function Login() {
       const { data } = res;
       setIsLoading(true);
       if (data) {
+        dispatch(setCredentials(data));
+        console.log("Login successful:");
         navigate("/");
         setEmail("");
         setPassword("");

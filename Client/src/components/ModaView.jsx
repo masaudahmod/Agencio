@@ -12,14 +12,22 @@ const Modal = ({ isOpen, onClose, data }) => {
     const handleScroll = () => {
       onClose();
     };
+    const handleEscapeKey = (event) => {
+      if (event.key === "Escape") {
+        onClose();
+      }
+    };
+
     if (isOpen) {
       document.addEventListener("mousedown", handleOutsideClick);
       document.addEventListener("scroll", handleScroll);
+      document.addEventListener("keydown", handleEscapeKey);
     }
 
     return () => {
       document.removeEventListener("mousedown", handleOutsideClick);
       document.removeEventListener("scroll", handleScroll);
+      document.removeEventListener("keydown", handleEscapeKey);
     };
   }, [isOpen, onClose]);
 
