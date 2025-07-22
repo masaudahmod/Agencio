@@ -1,9 +1,10 @@
 import * as React from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { RxCross2 } from "react-icons/rx";
-import { FaClipboard } from "react-icons/fa";
+import { FaCheckCircle, FaClipboard } from "react-icons/fa";
 
 const DialogBox = ({ data }) => {
+  const [copied, setCopied] = React.useState(false);
   console.log(data);
   if (!data) {
     return <div>Loading...</div>;
@@ -42,8 +43,10 @@ const DialogBox = ({ data }) => {
               <label className="text-sm block mb-1 text-gray-900">
                 Business Name
               </label>
+
               <input
-                value={data?.business || ""}
+                readOnly
+                value={data?.business?.businessName || ""}
                 className="w-full border border-gray-400 outline-none px-4 py-2 rounded-md text-sm"
               />
             </div>
@@ -51,6 +54,7 @@ const DialogBox = ({ data }) => {
             <div>
               <label className="text-sm block mb-1 text-gray-900">Date</label>
               <input
+                readOnly
                 value={new Date(data?.date).toLocaleDateString()}
                 className="w-full border border-gray-400 outline-none px-4 py-2 rounded-md text-sm"
               />
@@ -61,20 +65,23 @@ const DialogBox = ({ data }) => {
                 Caption Box & Tags
               </label>
               <textarea
+                readOnly
                 value={`${data?.posterText}\n\n ${data?.tags}`}
                 rows={4}
                 className="w-full border border-gray-400 outline-none px-4 py-2 rounded-md text-sm overflow-y-auto"
               />
               <button
-                onClick={() =>
+                onClick={() => {
                   navigator.clipboard.writeText(
                     `${data?.posterText}\n\n${data?.tags}`
-                  )
-                }
+                  );
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 8000);
+                }}
                 className="flex items-center absolute top-10 right-2 text-blue-500 text-xl cursor-pointer hover:text-blue-700 focus:text-blue-700"
                 aria-label="Copy to clipboard"
               >
-                <FaClipboard />
+                {copied ? <FaCheckCircle /> : <FaClipboard />}
               </button>
             </div>
 
@@ -83,13 +90,14 @@ const DialogBox = ({ data }) => {
                 Poster Text
               </label>
               <textarea
+                readOnly
                 value={data?.captionBox || ""}
                 rows={2}
                 className="w-full border outline-none border-gray-400 px-4 py-2 rounded-md text-sm overflow-y-auto"
               />
               <button
                 onClick={() => navigator.clipboard.writeText(data?.captionBox)}
-				className="flex items-center absolute top-10 right-2 text-blue-500 text-xl cursor-pointer hover:text-blue-700 focus:text-blue-700"
+                className="flex items-center absolute top-10 right-2 text-blue-500 text-xl cursor-pointer hover:text-blue-700 focus:text-blue-700"
               >
                 <FaClipboard />
               </button>
@@ -98,6 +106,7 @@ const DialogBox = ({ data }) => {
             <div className="md:col-span-2">
               <label className="text-sm block mb-1 text-gray-900">Vision</label>
               <textarea
+                readOnly
                 value={data?.vision || ""}
                 rows={2}
                 className="w-full border border-gray-400 outline-none px-4 py-2 rounded-md text-sm overflow-y-auto"
@@ -109,6 +118,7 @@ const DialogBox = ({ data }) => {
                 Comment
               </label>
               <textarea
+                readOnly
                 value={data?.comments?.comment || ""}
                 rows={3}
                 className="w-full border border-gray-400 outline-none px-4 py-2 rounded-md text-sm overflow-y-auto"

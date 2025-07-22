@@ -11,7 +11,7 @@ import { useGetBusinessesQuery } from "../features/api/businessSlice";
 import { useGetContentByDateQuery } from "../features/api/contentSlice";
 
 const WriteContent = () => {
-  const [currentDate, setCurrentDate] = useState();
+  const [currentDate, setCurrentDate] = useState(new Date().toISOString().split("T")[0]);
 
   const [contentList, setContentList] = useState([
     {
@@ -44,6 +44,8 @@ const WriteContent = () => {
   const { data: contents, isLoading: isContentLoading } =
     useGetContentByDateQuery(new Date().toISOString().split("T")[0]);
 
+  const [selectedBusinessId, setSelectedBusinessId] = useState(null);
+  console.log("selectedBusinessId", selectedBusinessId?.businessName);
   const businessData = data?.data?.businesses;
   const contentData = contents?.data;
 
@@ -104,9 +106,9 @@ const WriteContent = () => {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case "Active":
+      case "complete":
         return "bg-emerald-50 text-emerald-700 border-emerald-200";
-      case "Pending":
+      case "pending":
         return "bg-amber-50 text-amber-700 border-amber-200";
       default:
         return "bg-gray-50 text-gray-700 border-gray-200";
@@ -114,7 +116,7 @@ const WriteContent = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 -z-10">
       <div className="container mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-3">
           {/* Left Sidebar - Business List */}
@@ -153,7 +155,10 @@ const WriteContent = () => {
                             : ""
                         }`}
                       >
-                        <div className="flex items-start justify-between">
+                        <div
+                          onClick={() => setSelectedBusinessId(business)}
+                          className="flex items-start justify-between"
+                        >
                           <h3 className="font-medium text-gray-900 mb-1">
                             {business.businessName}
                           </h3>
@@ -168,6 +173,7 @@ const WriteContent = () => {
               </div>
             </div>
           </div>
+          {/* form - write content */}
           <div className=" lg:col-span-3 px-2">
             <h1 className="text-3xl font-bold text-gray-900 mb-3">
               Add Content
@@ -185,6 +191,8 @@ const WriteContent = () => {
                     </label>
                     <input
                       type="text"
+                      defaultValue={selectedBusinessId?.businessName}
+                      value={selectedBusinessId?.businessName}
                       {...register("name", {
                         required: "Business name is required",
                         minLength: {
@@ -241,7 +249,7 @@ const WriteContent = () => {
                       {...register("captionBox", {
                         required: "Caption box is required",
                       })}
-                      rows="6"
+                      rows="4"
                       placeholder="Enter Post Caption..."
                       className={`w-full px-4 py-3 border border-gray-300 outline-none focus:outline-none rounded-xl ${
                         errors.captionBox
@@ -262,7 +270,7 @@ const WriteContent = () => {
                       {...register("posterText", {
                         required: "Poster text is required",
                       })}
-                      rows="6"
+                      rows="4"
                       placeholder="Enter Poster Text..."
                       className={`w-full px-4 py-3 border border-gray-300 outline-none focus:outline-none rounded-xl ${
                         errors.posterText
@@ -286,7 +294,7 @@ const WriteContent = () => {
                       {...register("vision", {
                         required: "Vision is required",
                       })}
-                      rows="4"
+                      rows="3"
                       placeholder="Enter your vision..."
                       className={`w-full px-4 py-3 border border-gray-300 outline-none focus:outline-none rounded-xl ${
                         errors.vision
@@ -305,7 +313,7 @@ const WriteContent = () => {
                     </label>
                     <textarea
                       {...register("tags")}
-                      rows="4"
+                      rows="3"
                       placeholder="Enter tags separated by commas..."
                       className="w-full px-4 py-3 border border-gray-300 outline-none focus:outline-none rounded-xl"
                     />
@@ -319,7 +327,7 @@ const WriteContent = () => {
                   </label>
                   <textarea
                     {...register("comments")}
-                    rows="4"
+                    rows="1"
                     placeholder="Additional comments..."
                     className="w-full px-4 py-3 border border-gray-300 outline-none focus:outline-none rounded-xl"
                   />
@@ -427,41 +435,50 @@ const WriteContent = () => {
 
           {/* Mobile View */}
           <div className="block md:hidden space-y-4 p-4">
-            {contentData.map((item) => (
-              <div
-                key={item._id}
-                className="bg-white border border-gray-200 rounded-lg shadow-sm p-4"
-              >
-                <div className="mb-2">
-                  <span className="text-gray-600 text-sm">Business Name:</span>
-                  <p className="text-gray-900 font-medium">
-                    {item.businessName}
-                  </p>
-                </div>
-                <div className="mb-2">
-                  <span className="text-gray-600 text-sm">Date:</span>
-                  <p className="text-gray-900">{item.date}</p>
-                </div>
-                <div className="mb-2">
-                  <span className="text-gray-600 text-sm">Status:</span>
-                  <p>
-                    <span
-                      className={`inline-flex capitalize items-center px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(
-                        item.status
-                      )}`}
-                    >
-                      {item.status}
-                    </span>
-                  </p>
-                </div>
+            {isContentLoading ? (
+              <div className="text-center py-20">Loading...</div>
+            ) : (
+              <>
+                {" "}
+                {contentData.map((item) => (
+                  <div
+                    key={item._id}
+                    className="bg-white border border-gray-200 rounded-lg shadow-sm p-4"
+                  >
+                    <div className="mb-2">
+                      <span className="text-gray-600 text-sm">
+                        Business Name:
+                      </span>
+                      <p className="text-gray-900 font-medium">
+                        {item.businessName}
+                      </p>
+                    </div>
+                    <div className="mb-2">
+                      <span className="text-gray-600 text-sm">Date:</span>
+                      <p className="text-gray-900">{item.date}</p>
+                    </div>
+                    <div className="mb-2">
+                      <span className="text-gray-600 text-sm">Status:</span>
+                      <p>
+                        <span
+                          className={`inline-flex capitalize items-center px-3 py-1 rounded-full text-base font-medium border ${getStatusColor(
+                            item.status
+                          )}`}
+                        >
+                          {item.status}
+                        </span>
+                      </p>
+                    </div>
 
-                <div className="text-right mt-4">
-                  <button className="text-red-500 hover:text-red-700 text-sm font-medium transition-colors duration-200 hover:bg-red-50 px-3 py-1 rounded-lg">
-                    Delete
-                  </button>
-                </div>
-              </div>
-            ))}
+                    <div className="text-right mt-4">
+                      <button className="text-red-500 hover:text-red-700 text-sm font-medium transition-colors duration-200 hover:bg-red-50 px-3 py-1 rounded-lg">
+                        edit
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </>
+            )}
           </div>
         </div>
       </div>

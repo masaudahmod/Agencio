@@ -81,7 +81,7 @@ const getContentByDate = async (req, res, next) => {
         $gte: new Date(parsedDate.setHours(0, 0, 0, 0)),
         $lte: new Date(parsedDate.setHours(23, 59, 59, 999)),
       },
-    });
+    }).populate("business", "businessName")
 
     if (!contents.length) {
       return res
