@@ -1,13 +1,17 @@
-import { Navigate, Outlet } from "react-router-dom";
+import { Form, Navigate, Outlet } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useGetUserQuery } from "../features/api/authSlice";
 
 const ProtectedLayout = () => {
   const { isLoggedIn, user } = useSelector((state) => state.auth);
-  const { data: userData } = useGetUserQuery();
+  const { data: userData, isLoading } = useGetUserQuery();
+  
+  if (isLoading) {
+    return <div className="text-center py-20">Checking authentication...</div>;
+  }
 
   if (userData === undefined || userData === null) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login" replace={true} />;
   }
 
   if (userData) {

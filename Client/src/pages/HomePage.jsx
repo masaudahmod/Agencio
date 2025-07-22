@@ -9,20 +9,18 @@ import {
   AiOutlineCloseCircle as XCircle,
 } from "react-icons/ai";
 import { useGetBusinessesQuery } from "../features/api/businessSlice";
-import Modal from "../components/ModaView";
 import { useGetContentByDateQuery } from "../features/api/contentSlice";
 import {
   MdOutlineContentPasteSearch,
   MdEditCalendar,
   MdOutlineDeleteSweep,
 } from "react-icons/md";
+import DialogBox from "../components/DialogBox";
 
 const HomePage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedBusiness, setSelectedBusiness] = useState(null);
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
-
-  const [isOpen, setIsOpen] = useState(false);
 
   const { data, isLoading, error } = useGetBusinessesQuery();
   const {
@@ -33,7 +31,6 @@ const HomePage = () => {
 
   const businessData = data?.data?.businesses;
   const contentData = contents?.data;
-  
 
   const filteredBusinesses = useMemo(() => {
     if (!searchTerm) return businessData;
@@ -55,12 +52,9 @@ const HomePage = () => {
     );
   }, [selectedBusiness, contentData]);
 
-  console.log("Business Content:", businessContent);
-
-
   const getStatusIcon = (status) => {
     switch (status) {
-      case "completed":
+      case "complete":
         return <CheckCircle className="w-4 h-4 text-green-500" />;
       case "pending":
         return <AlertCircle className="w-4 h-4 text-yellow-500" />;
@@ -68,7 +62,7 @@ const HomePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="max-h-screen bg-gray-50">
       {/* Main Content */}
       <div className="container mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-3">
@@ -202,6 +196,9 @@ const HomePage = () => {
                               </span>
                             </div>
                           </td>
+                          <td>
+                            <DialogBox data={content} />
+                          </td>
                           <td className="px-4 flex gap-3 cursor-pointer py-4 whitespace-nowrap text-sm text-gray-600">
                             <button className="text-blue-500 cursor-pointer text-2xl">
                               <MdEditCalendar />
@@ -209,17 +206,6 @@ const HomePage = () => {
                             <button className="text-red-500 cursor-pointer text-3xl">
                               <MdOutlineDeleteSweep />
                             </button>
-                            <button
-                              onClick={() => setIsOpen(true)}
-                              className="text-green-500 cursor-pointer text-2xl"
-                            >
-                              <MdOutlineContentPasteSearch />
-                            </button>
-                            <Modal
-                              isOpen={isOpen}
-                              onClose={() => setIsOpen(false)}
-                              data={content}
-                            />
                           </td>
                         </tr>
                       ))}

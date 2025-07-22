@@ -10,8 +10,9 @@ const createContent = async (req, res, next) => {
       business,
       assignedTo,
       name,
-      postMaterial,
-      posterMaterial,
+      captionBox,
+      posterText,
+      priority,
       vision,
       tags,
       status,
@@ -40,8 +41,9 @@ const createContent = async (req, res, next) => {
       assignedTo: assignedTo || null,
       name,
       date: new Date(),
-      postMaterial,
-      posterMaterial,
+      captionBox,
+      posterText,
+      priority,
       vision,
       tags,
       status,
@@ -112,7 +114,6 @@ const getAllContent = async (req, res, next) => {
   }
 };
 
-
 const updateContent = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -142,7 +143,6 @@ const updateContent = async (req, res, next) => {
   }
 };
 
-
 const deleteContent = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -160,4 +160,10 @@ const deleteContent = async (req, res, next) => {
   }
 };
 
-export { createContent, getContentByDate, getAllContent, updateContent, deleteContent };
+export {
+  createContent,
+  getContentByDate,
+  getAllContent,
+  updateContent,
+  deleteContent,
+};
