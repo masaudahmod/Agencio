@@ -40,7 +40,6 @@ const createContent = async (req, res, next) => {
       createdBy: req.user?._id || req.userId,
       assignedTo: assignedTo || null,
       name,
-      date: new Date(),
       captionBox,
       posterText,
       priority,
@@ -81,7 +80,7 @@ const getContentByDate = async (req, res, next) => {
         $gte: new Date(parsedDate.setHours(0, 0, 0, 0)),
         $lte: new Date(parsedDate.setHours(23, 59, 59, 999)),
       },
-    }).populate("business", "businessName")
+    }).populate("business", "businessName");
 
     if (!contents.length) {
       return res

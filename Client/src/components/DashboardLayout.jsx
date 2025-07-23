@@ -71,9 +71,9 @@ export default function DashboardLayout() {
                   </NavLink>
                 )}
                 <NavLink
-                  to="/dashboard"
+                  to="/all-content"
                   className={`${
-                    window.location.pathname === "/dashboard"
+                    window.location.pathname === "/all-content"
                       ? "border-indigo-500 text-gray-900"
                       : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
                   } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
@@ -187,10 +187,10 @@ export default function DashboardLayout() {
               Write Content
             </NavLink>
             <NavLink
-              to="/dashboard"
+              to="/all-content"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className={`${
-                window.location.pathname === "/dashboard"
+                window.location.pathname === "/all-content"
                   ? "bg-indigo-50 border-indigo-500 text-indigo-700"
                   : "border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800"
               } block pl-3 pr-4 py-2 border-l-4 text-base font-medium`}
@@ -201,7 +201,7 @@ export default function DashboardLayout() {
               to="/business"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className={`${
-                window.location.pathname === "/dashboard"
+                window.location.pathname === "/all-content"
                   ? "bg-indigo-50 border-indigo-500 text-indigo-700"
                   : "border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800"
               } block pl-3 pr-4 py-2 border-l-4 text-base font-medium`}
@@ -222,10 +222,10 @@ export default function DashboardLayout() {
             </NavLink>
             {user?.role === "superAdmin" && (
               <NavLink
-                to="/dashboard/settings"
+                to="/all-content/settings"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 className={`${
-                  window.location.pathname === "/dashboard/settings"
+                  window.location.pathname === "/all-content/settings"
                     ? "bg-indigo-50 border-indigo-500 text-indigo-700"
                     : "border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800"
                 } block pl-3 pr-4 py-2 border-l-4 text-base font-medium`}

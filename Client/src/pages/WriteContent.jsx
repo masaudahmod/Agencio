@@ -11,31 +11,11 @@ import { useGetBusinessesQuery } from "../features/api/businessSlice";
 import { useGetContentByDateQuery } from "../features/api/contentSlice";
 
 const WriteContent = () => {
-  const [currentDate, setCurrentDate] = useState(new Date().toISOString().split("T")[0]);
+  const [currentDate, setCurrentDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
 
-  const [contentList, setContentList] = useState([
-    {
-      id: 1,
-      businessName: "AI Anaconda Foundation",
-      date: "2025-07-20",
-      status: "Published",
-      changeStatus: "Active",
-    },
-    {
-      id: 2,
-      businessName: "Bell House Keighley",
-      date: "2025-07-20",
-      status: "Draft",
-      changeStatus: "Pending",
-    },
-    {
-      id: 3,
-      businessName: "Curry Club London",
-      date: "2025-07-20",
-      status: "Published",
-      changeStatus: "Active",
-    },
-  ]);
+  console.log("currentDate", currentDate);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedBusiness, setSelectedBusiness] = useState(null);
@@ -45,7 +25,7 @@ const WriteContent = () => {
     useGetContentByDateQuery(new Date().toISOString().split("T")[0]);
 
   const [selectedBusinessId, setSelectedBusinessId] = useState(null);
-  console.log("selectedBusinessId", selectedBusinessId?.businessName);
+  // console.log("selectedBusinessId", selectedBusinessId);
   const businessData = data?.data?.businesses;
   const contentData = contents?.data;
 
@@ -61,41 +41,19 @@ const WriteContent = () => {
     );
   }, [searchTerm, businessData]);
 
-  // Form handling with react-hook-form
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
     watch,
-  } = useForm({
-    defaultValues: {
-      name: "",
-      date: "",
-      captionBox: "",
-      posterText: "",
-      vision: "",
-      tags: "",
-      comments: "",
-    },
-  });
+  } = useForm();
 
   const watchedFields = watch();
 
   const onSubmit = async (data) => {
     try {
       console.log("Form submitted with data:", data);
-
-      // Add new content to list
-      const newContent = {
-        id: contentList.length + 1,
-        businessName: data.name,
-        date: data.date,
-        status: "Draft",
-        changeStatus: "Pending",
-      };
-
-      setContentList((prev) => [newContent, ...prev]);
 
       // Reset form
       reset();
@@ -191,8 +149,9 @@ const WriteContent = () => {
                     </label>
                     <input
                       type="text"
-                      defaultValue={selectedBusinessId?.businessName}
+                      name="business"
                       value={selectedBusinessId?.businessName}
+                      onChange={(e) => setSelectedBusinessId(e.target.value)}
                       {...register("name", {
                         required: "Business name is required",
                         minLength: {
@@ -320,6 +279,45 @@ const WriteContent = () => {
                   </div>
                 </div>
 
+                {/* Priority and Status Row */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Priority */}
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-3">
+                      Priority
+                    </label>
+                    <select
+                      defaultValue="Moderate"
+                      {...register("priority", {
+                        required: "Priority is required",
+                      })}
+                      className="w-full px-4 py-3 border border-gray-300 outline-none focus:outline-none rounded-xl"
+                    >
+                      <option value="">Select Priority</option>
+                      <option value="Urgent">Urgent</option>
+                      <option value="Moderate">Moderate</option>
+                    </select>
+                  </div>
+
+                  {/* Status */}
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-3">
+                      Status
+                    </label>
+                    <select
+                      defaultValue="pending"
+                      {...register("status", {
+                        required: "Status is required",
+                      })}
+                      className="w-full px-4 py-3 border border-gray-300 outline-none focus:outline-none rounded-xl"
+                    >
+                      <option value="">Select Status</option>
+                      <option value="pending">Pending</option>
+                      <option value="complete">Complete</option>
+                    </select>
+                  </div>
+                </div>
+
                 {/* Comments */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-3">
@@ -388,33 +386,39 @@ const WriteContent = () => {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
-                    {contentData.map((item) => (
-                      <tr
-                        key={item._id}
-                        className="hover:bg-gray-50 transition-colors duration-150"
-                      >
-                        <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                          {item.name}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-600">
-                          {item.date}
-                        </td>
-                        <td className="px-6 py-4">
-                          <span
-                            className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(
-                              item.status
-                            )}`}
+                    {isContentLoading ? (
+                      <div className="text-center py-20">Loading...</div>
+                    ) : (
+                      <>
+                        {contentData.map((item) => (
+                          <tr
+                            key={item._id}
+                            className="hover:bg-gray-50 transition-colors duration-150"
                           >
-                            {item.status}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4">
-                          <button className="text-red-500 hover:text-red-700 text-sm font-medium transition-colors duration-200 hover:bg-red-50 px-3 py-1 rounded-lg">
-                            Delete
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
+                            <td className="px-6 py-4 text-sm font-medium text-gray-900">
+                              {item.name}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-600">
+                              {item.date}
+                            </td>
+                            <td className="px-6 py-4">
+                              <span
+                                className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(
+                                  item.status
+                                )}`}
+                              >
+                                {item.status}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4">
+                              <button className="text-red-500 hover:text-red-700 text-sm font-medium transition-colors duration-200 hover:bg-red-50 px-3 py-1 rounded-lg">
+                                Delete
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </>
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -449,9 +453,7 @@ const WriteContent = () => {
                       <span className="text-gray-600 text-sm">
                         Business Name:
                       </span>
-                      <p className="text-gray-900 font-medium">
-                        {item.businessName}
-                      </p>
+                      <p className="text-gray-900 font-medium">{item.name}</p>
                     </div>
                     <div className="mb-2">
                       <span className="text-gray-600 text-sm">Date:</span>

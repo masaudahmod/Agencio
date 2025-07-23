@@ -8,6 +8,7 @@ import WriteContent from "./pages/WriteContent";
 import ProtectedLayout from "./components/ProtectedLayout";
 import AddBusiness from "./pages/AddBusiness";
 import Settings from "./pages/Settings";
+import AllContent from "./pages/AllContent";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/content/write" element={<WriteContent />} />
             <Route path="/business/add" element={<AddBusiness />} />
+            <Route path="/all-content" element={<AllContent />} />
             <Route path="/settings" element={<Settings />} />
           </Route>
         </Route>
