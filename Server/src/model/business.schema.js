@@ -11,8 +11,10 @@ const businessSchema = Schema(
     entryDate: { type: Date, default: Date.now },
     expiredDate: Date,
     package: String,
-    imageUrl: String, // later you'll upload to S3 or cloudinary and store the url
-
+    imageUrl: String,
+    tags: {
+      type: String,
+    },
     status: {
       type: String,
       enum: ["active", "inactive", "pending"],
@@ -20,7 +22,7 @@ const businessSchema = Schema(
     },
 
     assignedTeam: {
-      team: { type: String }, // optional team name if exists
+      team: { type: String },
       assignBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
       campaignCoordinator: {
         type: mongoose.Schema.Types.ObjectId,

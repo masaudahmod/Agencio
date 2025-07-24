@@ -5,6 +5,7 @@ const baseUrl = "http://localhost:7000/api/v1";
 export const contentSlice = createApi({
   reducerPath: "contentApi",
   baseQuery: fetchBaseQuery({ baseUrl, credentials: "include" }),
+  keepUnusedDataFor: 600,
   endpoints: (builder) => ({
     createContent: builder.mutation({
       query: (newContent) => ({

@@ -42,8 +42,7 @@ export default function AllContent() {
                 key={index}
                 className="bg-white hover:bg-gray-100 cursor-grab shadow-lg rounded-2xl p-4 hover:shadow-xl transition duration-300"
               >
-                <h2 className="text-lg font-semibold mb-2">{content.name}</h2>
-                <p className="text-gray-600 mb-1 cursor-help">
+                <p className="text-gray-600 mb-1 cursor-help font-semibold text-lg">
                   <strong>Business:</strong> {content.business?.businessName}
                 </p>
                 <p className="text-sm text-gray-600 mb-1">
@@ -64,9 +63,17 @@ export default function AllContent() {
                   <strong>Priority:</strong> {content.priority}
                 </p>
 
-                <button className="mt-4 cursor-pointer text-sm text-blue-600 hover:underline">
-                  Edit Status
-                </button>
+                <div className="py-2">
+                  {content.status === "pending" ? (
+                    <button className="border p-1 cursor-pointer hover:bg-white  font-semibold rounded-lg text-sm text-gray-600">
+                      Complete
+                    </button>
+                  ) : (
+                    <button  className="border p-1 rounded-lg text-sm text-gray-600">
+                      <strong>Completed</strong>
+                    </button>
+                  )}
+                </div>
               </div>
             ))}
           </>

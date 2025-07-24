@@ -8,14 +8,15 @@ import {
   FaTimes,
 } from "react-icons/fa";
 import { useGetBusinessesQuery } from "../features/api/businessSlice";
-import { useGetContentByDateQuery } from "../features/api/contentSlice";
+import {
+  useCreateContentMutation,
+  useGetContentByDateQuery,
+} from "../features/api/contentSlice";
 
 const WriteContent = () => {
   const [currentDate, setCurrentDate] = useState(
     new Date().toISOString().split("T")[0]
   );
-
-  console.log("currentDate", currentDate);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedBusiness, setSelectedBusiness] = useState(null);
@@ -24,8 +25,10 @@ const WriteContent = () => {
   const { data: contents, isLoading: isContentLoading } =
     useGetContentByDateQuery(new Date().toISOString().split("T")[0]);
 
+  const [createContent] = useCreateContentMutation();
+
   const [selectedBusinessId, setSelectedBusinessId] = useState(null);
-  // console.log("selectedBusinessId", selectedBusinessId);
+
   const businessData = data?.data?.businesses;
   const contentData = contents?.data;
 
@@ -51,12 +54,27 @@ const WriteContent = () => {
 
   const watchedFields = watch();
 
-  const onSubmit = async (data) => {
+  const onSubmit = async () => {
     try {
-      console.log("Form submitted with data:", data);
+      const data = {
+        business: selectedBusinessId?._id,
+        captionBox: watchedFields.captionBox,
+        posterText: watchedFields.posterText,
+        priority: watchedFields.priority,
+        vision: watchedFields.vision,
+        tags: watchedFields.tags,
+        status: watchedFields.status,
+        comment: watchedFields.comment,
+      };
+      const res = await createContent(data).unwrap();
+      if (res) {
+        console.log(res?.message);
+      }
 
-      // Reset form
+      setSelectedBusinessId(null);
+      setCurrentDate();
       reset();
+      // Reset form
     } catch (error) {
       console.error("Form submission error:", error);
     }
@@ -139,7 +157,7 @@ const WriteContent = () => {
 
             {/* Form */}
             <div className="rounded-2xl p-2 md:p-3 mb-8">
-              <div className="space-y-4">
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 {/* Name and Date Row */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   {/* Name Field */}
@@ -150,7 +168,7 @@ const WriteContent = () => {
                     <input
                       type="text"
                       name="business"
-                      value={selectedBusinessId?.businessName}
+                      value={selectedBusinessId?.businessName || ""}
                       onChange={(e) => setSelectedBusinessId(e.target.value)}
                       {...register("name", {
                         required: "Business name is required",
@@ -179,7 +197,7 @@ const WriteContent = () => {
                     <div className="relative">
                       <input
                         type="date"
-                        value={currentDate}
+                        value={currentDate || ""}
                         onChange={(e) => setCurrentDate(e.target.value)}
                         {...register("date", {
                           required: "Date is required",
@@ -321,19 +339,19 @@ const WriteContent = () => {
                 {/* Comments */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-3">
-                    Comments <span className="text-gray-500">(Optional)</span>
+                    Comment <span className="text-gray-500">(Optional)</span>
                   </label>
                   <textarea
-                    {...register("comments")}
+                    {...register("comment")}
                     rows="1"
-                    placeholder="Additional comments..."
+                    placeholder="Additional comment..."
                     className="w-full px-4 py-3 border border-gray-300 outline-none focus:outline-none rounded-xl"
                   />
                 </div>
 
                 <div className="flex justify-end pt-4">
                   <button
-                    onClick={handleSubmit(onSubmit)}
+                    type="submit"
                     disabled={isSubmitting}
                     className="flex items-center gap-3 px-8 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-all cursor-pointer duration-200 shadow-lg hover:shadow-xl"
                   >
@@ -350,7 +368,7 @@ const WriteContent = () => {
                     )}
                   </button>
                 </div>
-              </div>
+              </form>
             </div>
 
             {/* Content List - Today's Content Only */}

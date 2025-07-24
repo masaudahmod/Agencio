@@ -9,7 +9,6 @@ const createContent = async (req, res, next) => {
     const {
       business,
       assignedTo,
-      name,
       captionBox,
       posterText,
       priority,
@@ -19,15 +18,17 @@ const createContent = async (req, res, next) => {
       comment,
     } = req.body;
 
-    if (!business || !name) {
-      throw new ApiError(400, "Business, Name, and Date are required");
-    }
-
     if (business) {
       const businessExists = await Business.findById(business);
       if (!businessExists) {
         throw new ApiError(404, "Business not found");
       }
+    }
+    if (!business || !tags || !posterText || !captionBox) {
+      throw new ApiError(
+        400,
+        "Business, tags, posterText, and captionBox are required"
+      );
     }
 
     if (assignedTo) {
@@ -39,7 +40,6 @@ const createContent = async (req, res, next) => {
       business,
       createdBy: req.user?._id || req.userId,
       assignedTo: assignedTo || null,
-      name,
       captionBox,
       posterText,
       priority,
@@ -47,7 +47,7 @@ const createContent = async (req, res, next) => {
       tags,
       status,
       comments: {
-        user: req.user?._id || req.userId,
+        user: req.user?._id || "User ID",
         comment: comment || "",
         date: new Date(),
       },

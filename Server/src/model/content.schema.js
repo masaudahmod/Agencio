@@ -5,7 +5,6 @@ const contentSchema = Schema(
     business: { type: mongoose.Schema.Types.ObjectId, ref: "Business" },
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     assignedTo: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, //totally optional
-    name: { type: String, required: true },
     date: { type: Date, required: true, default: Date.now },
     captionBox: { type: String },
     posterText: { type: String },

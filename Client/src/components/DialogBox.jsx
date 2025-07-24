@@ -5,7 +5,7 @@ import { FaCheckCircle, FaClipboard } from "react-icons/fa";
 
 const DialogBox = ({ data }) => {
   const [copied, setCopied] = React.useState(false);
-  console.log(data);
+  
   if (!data) {
     return <div>Loading...</div>;
   }
