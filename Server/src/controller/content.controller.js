@@ -128,7 +128,7 @@ const updateContent = async (req, res, next) => {
     const updated = await Content.findByIdAndUpdate(
       id,
       { $set: updateData },
-      { new: true, runValidators: true }
+      { new: true }
     );
 
     if (!updated) throw new ApiError(404, "Content not found");
@@ -159,10 +159,62 @@ const deleteContent = async (req, res, next) => {
   }
 };
 
+const statusUpdate = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) throw new ApiError(400, "Content ID is required");
+
+    const content = await Content.findById(id);
+
+    if (!content) throw new ApiError(404, "Content not found");
+
+    const updated = await Content.findByIdAndUpdate(
+      id,
+      { $set: { status: "complete" } },
+      { new: true }
+    );
+
+    res
+      .status(200)
+      .json(new ApiSuccess(200, "Status updated successfully", updated));
+  } catch (error) {
+    console.error("Error in statusUpdate:", error);
+    next(error);
+  }
+};
+
+const undoStatusUpdate = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) throw new ApiError(400, "Content ID is required");
+
+    const content = await Content.findById(id);
+
+    if (!content) throw new ApiError(404, "Content not found");
+
+    const updated = await Content.findByIdAndUpdate(
+      id,
+      { $set: { status: "pending" } },
+      { new: true }
+    );
+
+    res
+      .status(200)
+      .json(new ApiSuccess(200, "Status updated successfully", updated));
+  } catch (error) {
+    console.error("Error in undoStatusUpdate:", error);
+    next(error);
+  }
+};
+
 export {
   createContent,
   getContentByDate,
   getAllContent,
   updateContent,
   deleteContent,
+  statusUpdate,
+  undoStatusUpdate,
 };

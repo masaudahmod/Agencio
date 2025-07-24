@@ -1,11 +1,34 @@
 import React, { useState } from "react";
-import { useGetContentByDateQuery } from "../features/api/contentSlice";
+import {
+  useGetContentByDateQuery,
+  useStatusUpdateMutation,
+  useUndoStatusUpdateMutation,
+} from "../features/api/contentSlice";
 
 export default function AllContent() {
   const [filterDate, setFilterDate] = useState(
     new Date().toISOString().split("T")[0]
   );
-  const { data, isLoading, isError } = useGetContentByDateQuery(filterDate);
+  const { data, isLoading, isError, refetch } =
+    useGetContentByDateQuery(filterDate);
+  const [statusUpdate] = useStatusUpdateMutation();
+  const [undoStatusUpdate] = useUndoStatusUpdateMutation();
+  const handleStatusChange = async (id) => {
+    try {
+      await statusUpdate(id);
+      refetch();
+    } catch (error) {
+      console.error("Error updating status:", error);
+    }
+  };
+  const handleUndoStatusChange = async (id) => {
+    try {
+      await undoStatusUpdate(id);
+      refetch();
+    } catch (error) {
+      console.error("Error undo updating status:", error);
+    }
+  };
   return (
     <div className="container mx-auto px-4 py-6">
       <div className="mb-4">
@@ -40,16 +63,22 @@ export default function AllContent() {
             {data?.data.map((content, index) => (
               <div
                 key={index}
-                className="bg-white hover:bg-gray-100 cursor-grab shadow-lg rounded-2xl p-4 hover:shadow-xl transition duration-300"
+                className={`shadow-lg rounded-2xl p-4 hover:shadow-xl transition duration-300 ${
+                  content.status === "complete" ? "bg-green-200" : "bg-white"
+                }`}
               >
                 <p className="text-gray-600 mb-1 cursor-help font-semibold text-lg">
                   <strong>Business:</strong> {content.business?.businessName}
                 </p>
                 <p className="text-sm text-gray-600 mb-1">
+                  <strong>Caption Box:</strong>{" "}
+                  <span>{content.captionBox}</span>
+                </p>
+                <p className="text-sm text-gray-600 mb-1">
                   <strong>Status:</strong>{" "}
                   <span
                     className={`inline-block capitalize px-2 py-0.5 rounded text-white text-xs font-medium ${
-                      content.status === "completed"
+                      content.status === "complete"
                         ? "bg-green-500"
                         : content.status === "pending"
                         ? "bg-yellow-500"
@@ -65,13 +94,28 @@ export default function AllContent() {
 
                 <div className="py-2">
                   {content.status === "pending" ? (
-                    <button className="border p-1 cursor-pointer hover:bg-white  font-semibold rounded-lg text-sm text-gray-600">
+                    <button
+                      onClick={() => {
+                        handleStatusChange(content._id);
+                      }}
+                      className="border p-1 cursor-pointer hover:bg-white  font-semibold rounded-lg text-sm text-gray-600"
+                    >
                       Complete
                     </button>
                   ) : (
-                    <button  className="border p-1 rounded-lg text-sm text-gray-600">
-                      <strong>Completed</strong>
-                    </button>
+                    <div className="flex gap-2">
+                      <button className="border p-1 rounded-lg text-sm text-gray-600">
+                        <strong>Completed</strong>
+                      </button>
+                      <button
+                        onClick={() => {
+                          handleUndoStatusChange(content._id);
+                        }}
+                        className="border p-1 cursor-pointer hover:bg-white  font-semibold rounded-lg text-sm text-gray-600"
+                      >
+                        Undo
+                      </button>
+                    </div>
                   )}
                 </div>
               </div>

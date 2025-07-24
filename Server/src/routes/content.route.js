@@ -4,6 +4,8 @@ import {
   deleteContent,
   getAllContent,
   getContentByDate,
+  statusUpdate,
+  undoStatusUpdate,
   updateContent,
 } from "../controller/content.controller.js";
 import { auth } from "../middleware/auth.middleware.js";
@@ -16,5 +18,7 @@ router
   .route("/content/:id")
   .put(auth, updateContent)
   .delete(auth, deleteContent);
+
+router.route("/content/status/:id").put(auth, statusUpdate).post(auth, undoStatusUpdate);
 
 export default router;

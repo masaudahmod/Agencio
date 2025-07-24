@@ -19,7 +19,43 @@ export const contentSlice = createApi({
       query: (date) => `/content?date=${date}`,
       credentials: "include",
     }),
+    updateContent: builder.mutation({
+      query: (updatedContent) => ({
+        url: `/content/${updatedContent._id}`,
+        method: "PUT",
+        credentials: "include",
+        body: updatedContent,
+      }),
+    }),
+    deleteContent: builder.mutation({
+      query: (id) => ({
+        url: `/content/${id}`,
+        method: "DELETE",
+        credentials: "include",
+      }),
+    }),
+    statusUpdate: builder.mutation({
+      query: (id) => ({
+        url: `/content/status/${id}`,
+        method: "PUT",
+        credentials: "include",
+      }),
+    }),
+    undoStatusUpdate: builder.mutation({
+      query: (id) => ({
+        url: `/content/status/${id}`,
+        method: "POST",
+        credentials: "include",
+      }),
+    }),
   }),
 });
 
-export const { useCreateContentMutation, useGetContentByDateQuery } = contentSlice;
+export const {
+  useCreateContentMutation,
+  useGetContentByDateQuery,
+  useUpdateContentMutation,
+  useDeleteContentMutation,
+  useStatusUpdateMutation,
+  useUndoStatusUpdateMutation,
+} = contentSlice;
