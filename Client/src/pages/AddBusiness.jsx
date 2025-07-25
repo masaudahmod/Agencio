@@ -20,7 +20,7 @@ const AddBusiness = () => {
 
   const { data: user } = useGetUserQuery();
 
-  const { data, isLoading, error } = useGetBusinessesQuery();
+  const { data, isLoading, error, refetch } = useGetBusinessesQuery();
   const businessData = data?.data?.businesses;
 
   const [createBusiness, { isLoading: isCreating }] =
@@ -53,6 +53,7 @@ const AddBusiness = () => {
     try {
       const res = await createBusiness(payload).unwrap();
       console.log(res?.message);
+      refetch();
       reset();
     } catch (error) {
       console.error("Error submitting form:", error);

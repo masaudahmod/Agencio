@@ -9,6 +9,8 @@ import ProtectedLayout from "./components/ProtectedLayout";
 import AddBusiness from "./pages/AddBusiness";
 import Settings from "./pages/Settings";
 import AllContent from "./pages/AllContent";
+import Businesses from "./pages/Businesses";
+import LinksPage from "./pages/LinksPage";
 
 function App() {
   return (
@@ -26,6 +28,8 @@ function App() {
             <Route path="/business/add" element={<AddBusiness />} />
             <Route path="/all-content" element={<AllContent />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/business" element={<Businesses />} />
+            <Route path="/links" element={<LinksPage/>} />
           </Route>
         </Route>
 

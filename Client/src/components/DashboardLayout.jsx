@@ -8,11 +8,11 @@ export default function DashboardLayout() {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  
+
   const navigate = useNavigate();
 
   const [logout, { isError }] = useLogoutMutation();
-  const { data: userData } = useGetUserQuery(); 
+  const { data: userData } = useGetUserQuery();
 
   useEffect(() => {
     if (userData) {
@@ -56,7 +56,7 @@ export default function DashboardLayout() {
                 </NavLink>
               </div>
               <div className="hidden sm:ml-6 sm:flex sm:space-x-4">
-                {user?.role === "superAdmin" && (
+                {(user?.role === "superAdmin" || user?.role === "cm") && (
                   <NavLink
                     to="/settings"
                     className={`${
@@ -88,26 +88,43 @@ export default function DashboardLayout() {
                 >
                   Write Content
                 </NavLink>
-                <NavLink
-                  to="/business"
-                  className={`${
-                    window.location.pathname === "/business"
-                      ? "border-indigo-500 text-gray-900"
-                      : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
-                  } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
-                >
-                  Businesses
-                </NavLink>
-                <NavLink
-                  to="/business/add"
-                  className={`${
-                    window.location.pathname === "/business/add"
-                      ? "border-indigo-500 text-gray-900"
-                      : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
-                  } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
-                >
-                  Add Business
-                </NavLink>
+                {(user?.role === "superAdmin" || user?.role === "cm") && (
+                  <NavLink
+                    to="/business"
+                    className={`${
+                      window.location.pathname === "/business"
+                        ? "border-indigo-500 text-gray-900"
+                        : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                    } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
+                  >
+                    Businesses
+                  </NavLink>
+                )}
+                {(user?.role === "superAdmin" || user?.role === "cm") && (
+                  <>
+                    <NavLink
+                      to="/business/add"
+                      className={`${
+                        window.location.pathname === "/business/add"
+                          ? "border-indigo-500 text-gray-900"
+                          : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                      } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
+                    >
+                      Add Business
+                    </NavLink>
+                    <NavLink
+                      to="/links"
+                      className={`${
+                        window.location.pathname === "/links"
+                          ? "border-indigo-500 text-gray-900"
+                          : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                      }
+                    inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
+                    >
+                      Links
+                    </NavLink>
+                  </>
+                )}
               </div>
             </div>
             <div className="hidden sm:ml-6 sm:flex sm:items-center">
@@ -143,7 +160,7 @@ export default function DashboardLayout() {
                         >
                           New Private Window{" "}
                         </DropdownMenu.Item>
-                        
+
                         <DropdownMenu.Separator className="h-[1px] bg-violet-500" />
 
                         <DropdownMenu.Item

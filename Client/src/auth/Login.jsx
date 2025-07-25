@@ -12,7 +12,7 @@ export default function Login() {
   const navigate = useNavigate();
   
 
-  const [login] = useLoginMutation();
+  const [login, { isLoading: loginLoading }] = useLoginMutation();
 
   const { data: userData } = useGetUserQuery();
   
@@ -119,13 +119,12 @@ export default function Login() {
           <div>
             <button
               type="submit"
-              disabled={isLoading}
               className="w-full cursor-pointer flex justify-center py-2 px-4 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition"
             >
-              {isLoading ? "Signing in..." : "Sign In"}
+              {loginLoading ? "Signing in..." : "Sign In"}
             </button>
           </div>
-
+{/* 
           <div className="text-sm text-balance">
             Don't have an account?{" "}
             <Link
@@ -134,7 +133,7 @@ export default function Login() {
             >
               Register
             </Link>
-          </div>
+          </div> */}
         </form>
       </div>
     </div>
