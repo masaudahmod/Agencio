@@ -9,13 +9,11 @@ export const businessApi = createApi({
   endpoints: (builder) => ({
     getBusinesses: builder.query({
       query: () => "/business",
-      credentials: "include",
     }),
     createBusiness: builder.mutation({
       query: (newBusiness) => ({
         url: "/business",
         method: "POST",
-        credentials: "include",
         body: newBusiness,
       }),
     }),

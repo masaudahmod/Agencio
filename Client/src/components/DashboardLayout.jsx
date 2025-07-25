@@ -131,24 +131,24 @@ export default function DashboardLayout() {
                         className="min-w-[220px] rounded-md bg-white p-[5px] shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)] will-change-[opacity,transform] data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade data-[side=right]:animate-slideLeftAndFade data-[side=top]:animate-slideDownAndFade"
                         sideOffset={5}
                       >
-                        <DropdownMenu.Item className="group relative flex h-[25px] select-none items-center rounded-[3px] pl-[25px] pr-[5px] text-[13px] leading-none text-violet11 outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-violet9 data-[disabled]:text-mauve8 data-[highlighted]:text-violet1">
+                        <DropdownMenu.Item className="group relative flex select-none items-center px-2 py-1 text-base data-[disabled]:pointer-events-none data-[highlighted]:bg-violet9 data-[disabled]:text-mauve8 data-[highlighted]:text-violet1">
                           New Tab{" "}
                         </DropdownMenu.Item>
-                        <DropdownMenu.Item className="group relative flex h-[25px] select-none items-center rounded-[3px] pl-[25px] pr-[5px] text-[13px] leading-none text-violet11 outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-violet9 data-[disabled]:text-mauve8 data-[highlighted]:text-violet1">
+                        <DropdownMenu.Item className="group relative flex select-none items-center px-2 py-1 text-base data-[disabled]:pointer-events-none data-[highlighted]:bg-violet9 data-[disabled]:text-mauve8 data-[highlighted]:text-violet1">
                           New Window{" "}
                         </DropdownMenu.Item>
                         <DropdownMenu.Item
-                          className="group relative flex h-[25px] select-none items-center rounded-[3px] pl-[25px] pr-[5px] text-[13px] leading-none text-violet11 outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-violet9 data-[disabled]:text-mauve8 data-[highlighted]:text-violet1"
+                          className="group relative flex select-none items-center px-2 py-1 text-base data-[disabled]:pointer-events-none data-[highlighted]:bg-violet9 data-[disabled]:text-mauve8 data-[highlighted]:text-violet1"
                           disabled
                         >
                           New Private Window{" "}
                         </DropdownMenu.Item>
                         
-                        <DropdownMenu.Separator className="m-[5px] h-px bg-violet6" />
+                        <DropdownMenu.Separator className="h-[1px] bg-violet-500" />
 
                         <DropdownMenu.Item
                           onClick={handleLogout}
-                          className="group cursor-pointer relative flex h-[25px] select-none items-center rounded-[3px] pl-[25px] pr-[5px] text-[13px] leading-none text-violet11 outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-violet9 data-[disabled]:text-mauve8 data-[highlighted]:text-violet-600"
+                          className="group cursor-pointer relative flex select-none items-center rounded-[3px] p-2 text-base data-[disabled]:pointer-events-none data-[highlighted]:bg-violet9 data-[disabled]:text-mauve8 data-[highlighted]:text-violet-600"
                         >
                           Logout
                         </DropdownMenu.Item>
