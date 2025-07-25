@@ -1,19 +1,18 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useGetUserQuery, useLogoutMutation } from "../features/api/authSlice";
-import { useDispatch } from "react-redux";
-import { clearCredentials } from "../features/authHandle";
+import { DropdownMenu } from "radix-ui";
+import { FaCheck, FaChevronDown, FaFill, FaRegUser } from "react-icons/fa";
 
 export default function DashboardLayout() {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const dispatch = useDispatch();
-
+  
   const navigate = useNavigate();
 
   const [logout, { isError }] = useLogoutMutation();
-  const { data: userData } = useGetUserQuery();
+  const { data: userData } = useGetUserQuery(); 
 
   useEffect(() => {
     if (userData) {
@@ -22,10 +21,9 @@ export default function DashboardLayout() {
     setIsLoading(false);
   }, [userData]);
 
-  const handleLogout = () => {
-    logout();
-    navigate("/login");
-    dispatch(clearCredentials());
+  const handleLogout = async () => {
+    await logout();
+    navigate(0, { replace: true }, "/login");
   };
 
   if (isLoading) {
@@ -45,7 +43,7 @@ export default function DashboardLayout() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white shadow-sm sticky top-0 ">
+      <nav className="bg-white shadow-sm sticky top-0 z-40">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex">
@@ -115,15 +113,50 @@ export default function DashboardLayout() {
             <div className="hidden sm:ml-6 sm:flex sm:items-center">
               <div className="ml-3 relative">
                 <div className="flex items-center space-x-3">
-                  <span className="text-sm font-medium text-gray-700">
+                  <span className="text-sm capitalize font-medium text-gray-700">
                     {user?.name} ({user?.role})
                   </span>
-                  <button
-                    onClick={handleLogout}
-                    className="inline-flex cursor-pointer items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 "
-                  >
-                    Logout
-                  </button>
+                  <DropdownMenu.Root>
+                    <DropdownMenu.Trigger asChild>
+                      <button
+                        className="inline-flex size-[35px] items-center justify-center rounded-full bg-white text-violet11 shadow-[0_2px_10px] shadow-black outline-none cursor-pointer focus:shadow-[0_0_0_2px] focus:shadow-black"
+                        aria-label="Customise options"
+                      >
+                        <FaRegUser />
+                      </button>
+                    </DropdownMenu.Trigger>
+
+                    <DropdownMenu.Portal>
+                      <DropdownMenu.Content
+                        className="min-w-[220px] rounded-md bg-white p-[5px] shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)] will-change-[opacity,transform] data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade data-[side=right]:animate-slideLeftAndFade data-[side=top]:animate-slideDownAndFade"
+                        sideOffset={5}
+                      >
+                        <DropdownMenu.Item className="group relative flex h-[25px] select-none items-center rounded-[3px] pl-[25px] pr-[5px] text-[13px] leading-none text-violet11 outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-violet9 data-[disabled]:text-mauve8 data-[highlighted]:text-violet1">
+                          New Tab{" "}
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Item className="group relative flex h-[25px] select-none items-center rounded-[3px] pl-[25px] pr-[5px] text-[13px] leading-none text-violet11 outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-violet9 data-[disabled]:text-mauve8 data-[highlighted]:text-violet1">
+                          New Window{" "}
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Item
+                          className="group relative flex h-[25px] select-none items-center rounded-[3px] pl-[25px] pr-[5px] text-[13px] leading-none text-violet11 outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-violet9 data-[disabled]:text-mauve8 data-[highlighted]:text-violet1"
+                          disabled
+                        >
+                          New Private Window{" "}
+                        </DropdownMenu.Item>
+                        
+                        <DropdownMenu.Separator className="m-[5px] h-px bg-violet6" />
+
+                        <DropdownMenu.Item
+                          onClick={handleLogout}
+                          className="group cursor-pointer relative flex h-[25px] select-none items-center rounded-[3px] pl-[25px] pr-[5px] text-[13px] leading-none text-violet11 outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-violet9 data-[disabled]:text-mauve8 data-[highlighted]:text-violet-600"
+                        >
+                          Logout
+                        </DropdownMenu.Item>
+
+                        <DropdownMenu.Arrow className="fill-white" />
+                      </DropdownMenu.Content>
+                    </DropdownMenu.Portal>
+                  </DropdownMenu.Root>
                 </div>
               </div>
             </div>

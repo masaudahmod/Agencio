@@ -5,7 +5,7 @@ import { FaCheckCircle, FaClipboard } from "react-icons/fa";
 
 const DialogBox = ({ data }) => {
   const [copied, setCopied] = React.useState(false);
-  
+
   if (!data) {
     return <div>Loading...</div>;
   }
@@ -18,7 +18,7 @@ const DialogBox = ({ data }) => {
       </Dialog.Trigger>
 
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0  bg-black/50 backdrop-blur-sm" />
+        <Dialog.Overlay className="fixed inset-0 bg-black/50 backdrop-blur-sm" />
 
         <Dialog.Content
           className="fixed left-1/2 top-1/2 w-[90vw] md:w-7xl -translate-x-1/2 -translate-y-1/2 rounded-lg bg-slate-100 p-6 shadow-lg outline-none focus-visible:ring-2 focus-visible:ring-violet-600"
