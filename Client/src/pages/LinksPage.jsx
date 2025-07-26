@@ -19,7 +19,7 @@ const LinksPage = () => {
           {data?.data?.businesses?.map((biz) => (
             <div
               key={biz._id}
-              className="border border-gray-300 rounded-lg shadow-sm p-4 bg-white hover:shadow-md transition"
+              className="border border-gray-300 rounded-lg shadow-sm p-4 bg-[#8fc2e9]/30 hover:shadow-lg transition"
             >
               <h3 className="text-lg font-semibold text-gray-700 mb-3">
                 {biz.businessName}

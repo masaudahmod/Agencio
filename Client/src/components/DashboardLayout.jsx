@@ -50,6 +50,7 @@ export default function DashboardLayout() {
               <div className="flex-shrink-0 flex items-center">
                 <NavLink
                   to="/"
+                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                   className={`text-xl font-bold text-indigo-600 `}
                 >
                   Agencio

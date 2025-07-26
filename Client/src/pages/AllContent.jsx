@@ -49,7 +49,8 @@ export default function AllContent() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* use grid style instead of this */}
+      <div className="columns-1 md:columns-2 lg:columns-4 gap-6">
         {isLoading ? (
           <div className="text-center">Content Loading...</div>
         ) : isError ? (
@@ -63,8 +64,10 @@ export default function AllContent() {
             {data?.data.map((content, index) => (
               <div
                 key={index}
-                className={`shadow-lg rounded-2xl p-4 hover:shadow-xl transition duration-300 ${
-                  content.status === "complete" ? "bg-green-200" : "bg-white"
+                className={`break-inside-avoid mb-6 shadow-lg rounded-2xl p-4 hover:shadow-xl transition duration-300 ${
+                  content.status === "complete"
+                    ? "bg-green-100"
+                    : "bg-[#4caf71]/10"
                 }`}
               >
                 <p className="text-gray-600 mb-1 cursor-help font-semibold text-lg">
@@ -98,13 +101,13 @@ export default function AllContent() {
                       onClick={() => {
                         handleStatusChange(content._id);
                       }}
-                      className="border p-1 cursor-pointer hover:bg-white  font-semibold rounded-lg text-sm text-gray-600"
+                      className="border p-1 cursor-pointer hover:bg-white/50  font-semibold rounded-lg text-sm text-gray-600"
                     >
                       Complete
                     </button>
                   ) : (
                     <div className="flex gap-2">
-                      <button className="border p-1 rounded-lg text-sm text-gray-600">
+                      <button className="border p-1 rounded-lg text-sm text-gray-600 cursor-help">
                         <strong>Completed</strong>
                       </button>
                       <button

@@ -155,7 +155,7 @@ const HomePage = () => {
                             <strong>Poster Text:</strong> {content.posterText}
                           </p>
                         </div>
-                        <div className="md:ml-auto flex flex-col gap-1 text-right">
+                        <div className="md:ml-auto flex flex-col gap-1 text-balance md:text-right">
                           <h3>
                             {" "}
                             <strong>Priority:</strong>{" "}

@@ -29,7 +29,7 @@ const Businesses = () => {
           data?.data?.businesses.map((biz, index) => (
             <div
               key={index}
-              className="relative bg-white shadow-md hover:shadow-xl transition rounded-2xl p-5 flex flex-col justify-between"
+              className="relative bg-[#36a0ea]/10 shadow-md hover:shadow-xl transition rounded-2xl p-5 flex flex-col justify-between"
             >
               <div>
                 <h3 className="text-xl font-semibold text-gray-800 mb-2">
