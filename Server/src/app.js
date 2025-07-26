@@ -8,7 +8,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.use(
   cors({
-    origin: "https://agencio-liard.vercel.app",
+    origin: [origin, "http://localhost:5173"],
     credentials: true,
   })
 );
@@ -18,6 +18,7 @@ import { errorHandler } from "./middleware/errorHandler.middleware.js";
 import userRoutes from "./routes/user.route.js";
 import businessRoutes from "./routes/business.route.js";
 import contentRoutes from "./routes/content.route.js";
+import { origin } from "./constant.js";
 
 app.use("/api/v1", userRoutes);
 app.use("/api/v1", businessRoutes);
