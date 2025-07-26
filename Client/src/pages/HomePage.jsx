@@ -1,21 +1,13 @@
 import React, { useState, useMemo } from "react";
-import {
-  AiOutlineSearch as Search,
-  AiOutlineFilter as Filter,
-  AiOutlineStar as Star,
-  AiOutlineClockCircle as Clock,
-  AiOutlineCheckCircle as CheckCircle,
-  AiOutlineAlert as AlertCircle,
-  AiOutlineCloseCircle as XCircle,
-} from "react-icons/ai";
+import { AiOutlineSearch as Search } from "react-icons/ai";
 import { useGetBusinessesQuery } from "../features/api/businessSlice";
 import { useGetContentByDateQuery } from "../features/api/contentSlice";
-import {
-  MdOutlineContentPasteSearch,
-  MdEditCalendar,
-  MdOutlineDeleteSweep,
-} from "react-icons/md";
+import { MdEditCalendar, MdOutlineDeleteSweep } from "react-icons/md";
 import DialogBox from "../components/DialogBox";
+import { LiaEditSolid } from "react-icons/lia";
+
+import { RiDeleteBin5Line } from "react-icons/ri";
+import EditContent from "../components/EditContent";
 
 const HomePage = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -27,6 +19,7 @@ const HomePage = () => {
     data: contents,
     isLoading: isContentLoading,
     error: contentError,
+    refetch,
   } = useGetContentByDateQuery(date);
 
   const businessData = data?.data?.businesses;
@@ -51,16 +44,6 @@ const HomePage = () => {
       (content) => content.business === selectedBusiness._id
     );
   }, [selectedBusiness, contentData]);
-
-
-  const getStatusIcon = (status) => {
-    switch (status) {
-      case "complete":
-        return <CheckCircle className="w-4 h-4 text-green-500" />;
-      case "pending":
-        return <AlertCircle className="w-4 h-4 text-yellow-500" />;
-    }
-  };
 
   return (
     <div className="max-h-screen bg-gray-50">
@@ -131,7 +114,7 @@ const HomePage = () => {
 
           {/* Right Content - Tasks Table */}
           <div className="lg:col-span-3">
-            <div className="bg-white rounded-lg shadow-sm">
+            <div className="bg-[#f3f6fd]  rounded-lg shadow-sm">
               <div className="p-4 border-b">
                 <h2 className="text-lg font-semibold text-gray-900">
                   {selectedBusiness
@@ -140,83 +123,82 @@ const HomePage = () => {
                 </h2>
               </div>
 
-              {/* Tasks Table */}
-              <div className="w-full">
-                <table className="w-full">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Content
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        typeOfBusiness
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Status
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        --
-                      </th>
-                    </tr>
-                  </thead>
-                  {isContentLoading ? (
-                    <tbody>
-                      <tr>
-                        <td colSpan="4" className="text-center py-4">
-                          Loading content...
-                        </td>
-                      </tr>
-                    </tbody>
-                  ) : contentError ? (
-                    <tbody>
-                      <tr>
-                        <td colSpan="4" className="text-center py-4">
-                          Error fetching content: {contentError.message}
-                        </td>
-                      </tr>
-                    </tbody>
-                  ) : (
-                    <tbody className="bg-white divide-y divide-gray-200">
-                      {businessContent.map((content, index) => (
-                        <tr key={index} className="hover:bg-gray-50">
-                          <td className="px-4 py-4 whitespace-nowrap">
-                            <div className="text-sm font-medium text-gray-900">
-                              {content.business?.businessName}
-                            </div>
-                          </td>
-                          <td className="px-4 py-4 whitespace-nowrap">
-                            <span className="text-sm text-gray-600">
-                              {content.typeOfBusiness}
-                            </span>
-                          </td>
-                          <td className="px-4 py-4 whitespace-nowrap">
-                            <div className="flex items-center gap-2">
-                              {getStatusIcon(content.status)}
-                              <span className="text-sm text-gray-900 capitalize">
-                                {content.status}
+              {/* filter content by date */}
+              <div className="">
+                {isContentLoading ? (
+                  <div>Loading content...</div>
+                ) : contentError ? (
+                  <div>
+                    <p className="text-center py-4">
+                      Error fetching content: {contentError.message}
+                    </p>
+                  </div>
+                ) : (
+                  <div className="p-4 w-full grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {businessContent.map((content, index) => (
+                      <div
+                        key={index}
+                        className="col-span-1 bg-[#fee4cb] rounded-md p-4  flex flex-col md:flex-row md:items-center gap-1"
+                      >
+                        <div className="flex flex-col gap-1">
+                          <h3>
+                            {" "}
+                            <strong>business:</strong>{" "}
+                            {content.business?.businessName}
+                          </h3>
+                          <p>
+                            {" "}
+                            <strong>Caption Box:</strong> {content.captionBox}
+                          </p>
+                          <p>
+                            {" "}
+                            <strong>Poster Text:</strong> {content.posterText}
+                          </p>
+                        </div>
+                        <div className="md:ml-auto flex flex-col gap-1 text-right">
+                          <h3>
+                            {" "}
+                            <strong>Priority:</strong>{" "}
+                            {content.priority === "Urgent" ? (
+                              <span className="text-orange-600 font-semibold">
+                                Urgent
                               </span>
-                            </div>
-                          </td>
-                          <td>
+                            ) : (
+                              <span className="text-orange-900 ">Moderate</span>
+                            )}
+                          </h3>
+                          <p>
+                            {" "}
+                            <strong>Status:</strong>{" "}
+                            {content.status === "pending" ? (
+                              <span className="text-red-700 font-semibold">
+                                Pending
+                              </span>
+                            ) : (
+                              <span className="text-green-700 font-semibold">
+                                Completed
+                              </span>
+                            )}
+                          </p>
+                          <div className="ml-auto flex gap-2 items-center">
+                            {/* view */}
                             <DialogBox data={content} />
-                          </td>
-                          <td className="px-4 flex gap-3 cursor-pointer py-4 whitespace-nowrap text-sm text-gray-600">
-                            <button className="text-blue-500 cursor-pointer text-2xl">
-                              <MdEditCalendar />
+                            {/* edit */}
+                            <EditContent data={content} refetch={refetch} />
+                            {/* delete */}
+                            <button>
+                              <RiDeleteBin5Line className="text-2xl hover:text-red-600 cursor-pointer" />
                             </button>
-                            <button className="text-red-500 cursor-pointer text-3xl">
-                              <MdOutlineDeleteSweep />
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  )}
-                </table>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {businessContent && businessContent.length === 0 && (
-                <div className="text-center py-8 text-gray-500">
+                <div className="text-center py-8 bg-[#fee4cb] text-white">
                   No tasks found for the selected business.
                 </div>
               )}

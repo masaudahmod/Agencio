@@ -2,6 +2,7 @@ import * as React from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { RxCross2 } from "react-icons/rx";
 import { FaCheckCircle, FaClipboard } from "react-icons/fa";
+import { AiOutlineRead } from "react-icons/ai";
 
 const DialogBox = ({ data }) => {
   const [copied, setCopied] = React.useState(false);
@@ -12,8 +13,8 @@ const DialogBox = ({ data }) => {
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>
-        <button className="inline-flex h-9 items-center cursor-pointer justify-center rounded-md bg-violet-500 px-4 text-sm font-medium text-white hover:bg-violet-600 focus-visible:outline  focus-visible:outline-violet-700">
-          View
+        <button>
+          <AiOutlineRead className="text-2xl hover:text-blue-600 cursor-pointer" />
         </button>
       </Dialog.Trigger>
 
@@ -21,23 +22,12 @@ const DialogBox = ({ data }) => {
         <Dialog.Overlay className="fixed inset-0 bg-black/50 backdrop-blur-sm" />
 
         <Dialog.Content
-          className="fixed left-1/2 top-1/2 w-[90vw] md:w-7xl -translate-x-1/2 -translate-y-1/2 rounded-lg bg-slate-100 p-6 shadow-lg outline-none focus-visible:ring-2 focus-visible:ring-violet-600"
-          aria-labelledby="dialog-title"
-          aria-describedby="dialog-description"
+          className="fixed left-1/2 top-1/2 w-[90vw] md:w-7xl h-[80vh] -translate-x-1/2 z-50 -translate-y-1/2 rounded-lg bg-slate-100 p-4 shadow-lg outline-none focus-visible:ring-2 focus-visible:ring-violet-600 overflow-y-auto"
+          aria-describedby=""
         >
-          <Dialog.Title
-            id="dialog-title"
-            className="text-lg font-semibold text-gray-900"
-          >
-            {data.name || "Content...."}
+          <Dialog.Title className="text-lg font-semibold text-gray-900">
+            Content
           </Dialog.Title>
-          <Dialog.Description
-            id="dialog-description"
-            className="mt-1 mb-4 text-sm text-gray-600"
-          >
-            Make changes to your profile here. Click save when you're done.
-          </Dialog.Description>
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-black">
             <div>
               <label className="text-sm block mb-1 text-gray-900">
@@ -134,14 +124,6 @@ const DialogBox = ({ data }) => {
               <button>close</button>
             </Dialog.Close>
           </div>
-          <Dialog.Close asChild>
-            <button
-              className="absolute right-3 top-3 inline-flex size-10 items-center justify-center rounded-full text-gray-500 hover:bg-gray-100 hover:text-gray-700 focus:outline-none cursor-pointer focus-visible:ring-2 focus-visible:ring-violet-500"
-              aria-label="Close"
-            >
-              <RxCross2 />
-            </button>
-          </Dialog.Close>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>

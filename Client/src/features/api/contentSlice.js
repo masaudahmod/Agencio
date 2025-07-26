@@ -11,19 +11,16 @@ export const contentSlice = createApi({
       query: (newContent) => ({
         url: "/content",
         method: "POST",
-        credentials: "include",
         body: newContent,
       }),
     }),
     getContentByDate: builder.query({
       query: (date) => `/content?date=${date}`,
-      credentials: "include",
     }),
     updateContent: builder.mutation({
-      query: (updatedContent) => ({
-        url: `/content/${updatedContent._id}`,
+      query: ({ updatedContent, id }) => ({
+        url: `/content/${id}`,
         method: "PUT",
-        credentials: "include",
         body: updatedContent,
       }),
     }),
@@ -31,21 +28,18 @@ export const contentSlice = createApi({
       query: (id) => ({
         url: `/content/${id}`,
         method: "DELETE",
-        credentials: "include",
       }),
     }),
     statusUpdate: builder.mutation({
       query: (id) => ({
         url: `/content/status/${id}`,
         method: "PUT",
-        credentials: "include",
       }),
     }),
     undoStatusUpdate: builder.mutation({
       query: (id) => ({
         url: `/content/status/${id}`,
         method: "POST",
-        credentials: "include",
       }),
     }),
   }),

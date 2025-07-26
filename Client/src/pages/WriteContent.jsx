@@ -22,8 +22,11 @@ const WriteContent = () => {
   const [selectedBusiness, setSelectedBusiness] = useState(null);
 
   const { data, isLoading, error } = useGetBusinessesQuery();
-  const { data: contents, isLoading: isContentLoading } =
-    useGetContentByDateQuery(new Date().toISOString().split("T")[0]);
+  const {
+    data: contents,
+    isLoading: isContentLoading,
+    refetch,
+  } = useGetContentByDateQuery(new Date().toISOString().split("T")[0]);
 
   const [createContent] = useCreateContentMutation();
 
@@ -74,7 +77,7 @@ const WriteContent = () => {
       setSelectedBusinessId(null);
       setCurrentDate();
       reset();
-      // Reset form
+      refetch();
     } catch (error) {
       console.error("Form submission error:", error);
     }
@@ -414,7 +417,7 @@ const WriteContent = () => {
                             className="hover:bg-gray-50 transition-colors duration-150"
                           >
                             <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                              {item.name}
+                              {item.business?.businessName}
                             </td>
                             <td className="px-6 py-4 text-sm text-gray-600">
                               {item.date}
